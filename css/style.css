@@ -51,6 +51,10 @@ aside {
     font-size: 1.3rem;
 }
 
+/* .direccion-usuario {
+    margin-top: 2rem;
+} */
+
 .menu {
     display: flex;
     flex-direction: column;
