@@ -1,66 +1,46 @@
-// Podrias usar lo que vimos hace 2 clases: metodos como filter(); filtras el array por una categoria, ej: "remeras", y mostras en la seccion solo las remeras.
-
-// const SECCIONES = [
-//     {text: "Todos los productos", url: "../index.html"},
-//     {text: "Todos los productos", url: "../index.html"},
-//     {text: "Todos los productos", url: "../carrito.html"}
-// ]
-function sumarProductos(articulo) {
-    let cantidad
-    let montoFinal = 0
-    let remera = 10000
-    let buzo = 30000
-    let jean = 25500
-    let campera = 60000
-
-    while (articulo != '*') {
-        cantidad = prompt("Ingrese la cantidad de unidades para este producto");
-        cantidad = parseInt(cantidad)
-
-        if (articulo == "1") {
-            // console.log("Se sumo el articulo remera al carrito (cantidad : " + cantidad + ")");
-            console.log(`Se sumo el articulo remera al carrito (cantidad : ${cantidad})`);
-            montoFinal += (remera * cantidad);
-        }
-        else if (articulo == "2"){
-            console.log(`Se sumo el articulo buzo con estampado al carrito (cantidad : ${cantidad})`);
-            montoFinal += (buzo * cantidad);
-        }
-        else if (articulo == "3"){
-            // console.log("Se sumo el articulo jean roto holgado al carrito (cantidad : " + cantidad + ")");
-            console.log(`Se sumo el articulo jean roto holgado al carrito (cantidad : ${cantidad})`);
-            montoFinal += (jean * cantidad);
-        }
-        else if (articulo == "4"){
-            // console.log("Se sumo el articulo campera inflada al carrito (cantidad : " + cantidad + ")");
-            console.log(`Se sumo el articulo campera al carrito (cantidad : ${cantidad})`);
-            montoFinal += (campera * cantidad);
-        }
-        articulo = prompt("Seleccione el tipo de producto que desea agregar para su compra: \n 1) Remera lisa - $10.000 \n 2) Buzo con estampado en la espalda - $30.000 \n 3) Jean roto holgado - 25.500 \n 4) Campera rompevientos - 60.000");
-    }
-    alert("El monto total de tu compra es de $" + montoFinal + " ARS");
-    console.log("El monto total de tu compra es de $" + montoFinal + " ARS");
-}
-
 //Pido lo que necesito al HTML
 const GETDIRECTION = document.getElementById("direccion");
 const ALLPRODUCTS = document.getElementById("contenedor-productos");
+const BOTONESCATEGORIAS = document.querySelectorAll(".boton-categoria");
+const TITULOPRINCIPAL = document.querySelector("#titulo-principal");
+let botonesAgregar = document.querySelectorAll(".boton-agregar");
+const numerito = document.querySelector("#numerito");
 
-//Pido datos al usuario para mostrarlos en pantalla simulando por ejemplo que la ubicación ingresada es donde se van a entregar los productos
-//let nombreUsuario = prompt("Por favor, ingrese su nombre");
-let direccionUsuario = prompt("Por favor, ingrese la dirección en la que se entregaran los pedidos");
+function agregarDireccion(direccionUsuario) {
+    direccionUsuario = direccionUsuario.charAt(0).toUpperCase() + direccionUsuario.slice(1);
 
-if (direccionUsuario) {
-    direccionUsuario = direccionUsuario.charAt(0).toUpperCase() + direccionUsuario.slice(1); // Convertimos la primera letra a mayúscula y concatenamos el resto de la cadena
-}
-
-function agregarDireccon(direccionUsuario) {
     const DIRECCION = document.createElement("div");
     DIRECCION.classList.add("direccion");
     DIRECCION.innerHTML = `
                            <p><i class="bi bi-geo-alt"></i> Enviar a: ${direccionUsuario}</p></i>
                           `
     GETDIRECTION.appendChild(DIRECCION);
+}
+
+function obtenerDireccion() {
+    // Obtener la dirección guardada en sessionStorage
+    let direccionGuardada = sessionStorage.getItem("direccionUsuario");
+
+    // Si la dirección no está almacenada, o si la página se abre por primera vez, solicitar la dirección
+    if (!direccionGuardada) {
+        document.addEventListener("DOMContentLoaded", () => {
+            Swal.fire({
+                title: "Ingrese la dirección donde desea enviar sus pedidos.",
+                input: "text",
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let direccionUsuario = result.value;
+                    // Guardar la dirección en sessionStorage
+                    sessionStorage.setItem("direccionUsuario", direccionUsuario);
+                    // Agregar la dirección al DOM
+                    agregarDireccion(direccionUsuario);
+                }
+            });
+        });
+    } else {
+        // Si la dirección está almacenada, agregarla al DOM directamente
+        agregarDireccion(direccionGuardada);
+    }
 }
 
 class Producto {
@@ -73,24 +53,26 @@ class Producto {
 }
 
 const productosArray = [
-    new Producto("1", "Campera Jean", "/images/abrigos/01.jpg", 2000),
-    new Producto("2", "Buzo Crema", "/images/abrigos/02.jpg", 2000),
-    new Producto("3", "Campera Impermeable", "/images/abrigos/03.jpg", 2000),
-    new Producto("4", "Sobretodo Marron", "/images/abrigos/SacoMujer.jpg", 2000),
-    new Producto("5", "Pantalon Skinny Fit", "/images/pantalones/01.jpg", 2000),
-    new Producto("6", "Bermuda Jogger", "/images/pantalones/02.jpg", 2000),
-    new Producto("7", "Pantalon Cinturon Combinado", "/images/pantalones/03.jpg", 2000),
-    new Producto("8", "Pantalones Estructura", "/images/pantalones/04.jpg", 2000),
-    new Producto("9", "Pantalones Cargo", "/images/pantalones/05.jpg", 2000),
-    new Producto("10", "Remera Piqué", "/images/remeras/01.jpg", 2000),
-    new Producto("11", "Remera Básica Azul", "/images/remeras/02.jpg", 2000),
-    new Producto("12", "Chomba Violeta", "/images/remeras/03.jpg", 2000),
-    new Producto("13", "Remera Estampado Combinado", "/images/remeras/04.jpg", 2000),
-    new Producto("14", "Remera Punto", "/images/remeras/05.jpg", 2000)
+    new Producto("abrigo-1", "Campera Jean", "/images/abrigos/01.jpg", 2000),
+    new Producto("abrigo-2", "Buzo Crema", "/images/abrigos/02.jpg", 2000),
+    new Producto("abrigo-3", "Campera Impermeable", "/images/abrigos/03.jpg", 2000),
+    new Producto("abrigo-4", "Sobretodo Marron", "/images/abrigos/04.jpg", 2000),
+    new Producto("pantalon-5", "Pantalon Skinny Fit", "/images/pantalones/01.jpg", 2000),
+    new Producto("pantalon-6", "Bermuda Jogger", "/images/pantalones/02.jpg", 2000),
+    new Producto("pantalon-7", "Pantalon Negro", "/images/pantalones/03.jpg", 2000),
+    new Producto("pantalon-8", "Pantalon Estructura", "/images/pantalones/04.jpg", 2000),
+    new Producto("pantalon-9", "Pantalon Cargo", "/images/pantalones/05.jpg", 2000),
+    new Producto("remera-10", "Remera Piqué", "/images/remeras/01.jpg", 2000),
+    new Producto("remera-11", "Remera Azul", "/images/remeras/02.jpg", 2000),
+    new Producto("remera-12", "Chomba Violeta", "/images/remeras/03.jpg", 2000),
+    new Producto("remera-13", "Remera Blanca", "/images/remeras/04.jpg", 2000),
+    new Producto("remera-14", "Remera Punto", "/images/remeras/05.jpg", 2000)
 ]
 
-function agregarProductos(productos) {
-    productos.forEach(producto => {
+function agregarProductos(productosElegidos) {
+    ALLPRODUCTS.innerHTML = ""; //Aca lo que hago es que cada vez que empieza esta funcion se vuelven a cargar las cards
+
+    productosElegidos.forEach(producto => {
         const CARD = document.createElement("div");
         CARD.innerHTML = `
                         <div class="producto">
@@ -98,22 +80,89 @@ function agregarProductos(productos) {
                             <div class="producto-detalles">
                                 <h3 class="producto-titulo">${producto.nombre}</h3>
                                 <p>$${producto.precio}</p>
-                                <button class="producto-agregar">Agregar al Carrito</button>
+                                <button class="producto-agregar" id = "${producto.id}">Agregar al Carrito</button>
                             </div>
                         </div>
                          `
         ALLPRODUCTS.appendChild(CARD);
     });
+    actualizarBotonesAgregar();
+}
+
+const categorias = {
+    "remeras": "remera",
+    "abrigos": "abrigo",
+    "pantalones": "pantalon"
+};
+
+BOTONESCATEGORIAS.forEach(boton => {
+    boton.addEventListener("click", (e) => {
+        BOTONESCATEGORIAS.forEach(boton => boton.classList.remove("active"));
+        e.currentTarget.classList.add("active");
+
+        const categoriaSeleccionada = categorias[e.currentTarget.dataset.categoria];
+
+        if (categoriaSeleccionada) {
+            const nombreCategoria = e.currentTarget.innerText.trim();
+            TITULOPRINCIPAL.innerText = nombreCategoria;
+            const PRODUCTOSFILTRADOS = productosArray.filter(producto => producto.id.startsWith(categoriaSeleccionada));
+            agregarProductos(PRODUCTOSFILTRADOS);
+        } else {
+            // Si la categoría no está definida, mostrar todos los productos
+            TITULOPRINCIPAL.innerText = "Todos los productos";
+            agregarProductos(productosArray);
+        }
+    });
+});
+
+function actualizarBotonesAgregar() {
+    botonesAgregar = document.querySelectorAll(".producto-agregar");
+
+    botonesAgregar.forEach(boton => {
+        boton.addEventListener("click", agregarAlCarrito);
+    })
+}
+
+let productosEnCarrito;
+const PRODENCARRITOls = JSON.parse(localStorage.getItem("productos-en-carrito"));
+if (PRODENCARRITOls) {
+    productosEnCarrito = PRODENCARRITOls
+    actualizarNumero();
+} else {
+    productosEnCarrito = []
+}
+
+function agregarAlCarrito(e) {
+    const idBoton = e.currentTarget.id;
+    const PRODUCTOAGREGADO = productosArray.find(producto => producto.id === idBoton);
+
+    if (productosEnCarrito.some(producto => producto.id === idBoton)) {
+        const index = productosEnCarrito.findIndex(producto => producto.id === idBoton)
+        productosEnCarrito[index].cantidad++;
+    } else {
+        PRODUCTOAGREGADO.cantidad = 1;
+        productosEnCarrito.push(PRODUCTOAGREGADO);
+    }
+    Toastify({
+        text: "El producto fue agregado a tu carrito",
+        duration: 3000,
+        style: {
+            background: "linear-gradient(to right, #bb0033, #ff3169)",
+          },
+        }).showToast();  
+    actualizarNumero();
+
+    localStorage.setItem("productos-en-carrito", JSON.stringify(productosEnCarrito));
+}
+
+function actualizarNumero() {
+    let nuevoNumerito = productosEnCarrito.reduce((acc, producto) => acc + producto.cantidad, 0);
+    numerito.innerHTML = nuevoNumerito;
 }
 
 function main() {
-    let articulo;
-
-    articulo = prompt("Seleccione el tipo de producto que desea agregar para su compra: \n 1) Remera lisa - $10.000 \n 2) Buzo con estampado en la espalda - $30.000 \n 3) Jean roto holgado - 25.500 \n 4) Campera rompevientos - 60.000");
-    sumarProductos(articulo);
-
+    obtenerDireccion();
     agregarProductos(productosArray);
-    agregarDireccon(direccionUsuario);
 }
 
 main();
